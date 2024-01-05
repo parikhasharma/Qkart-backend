@@ -39,6 +39,9 @@ const { userService } = require("../services");
  *
  */
 const getUser = catchAsync(async (req, res) => {
+  const { userId } = req.params;
+  let user = await userService.getUserById(userId);
+  return res.status(httpStatus.OK).send(user);
 });
 
 
