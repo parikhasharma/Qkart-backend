@@ -14,6 +14,9 @@ const { userService } = require("../services");
  *  - If data doesn't exist, throw an error using `ApiError` class
  *    - Status code should be "404 NOT FOUND"
  *    - Error message, "User not found"
+ *  - If the user whose token is provided and user whose data to be fetched don't match, throw `ApiError`
+ *    - Status code should be "403 FORBIDDEN"
+ *    - Error message, "User not found"
  *
  * 
  * Request url - <workspace-ip>:8082/v1/users/6010008e6c3477697e8eaba3
@@ -41,6 +44,9 @@ const { userService } = require("../services");
 const getUser = catchAsync(async (req, res) => {
   const { userId } = req.params;
   let user = await userService.getUserById(userId);
+  if (userId != req.user._id) {
+    throw new ApiError(403, "You are not authorized");
+  }
   return res.status(httpStatus.OK).send(user);
 });
 

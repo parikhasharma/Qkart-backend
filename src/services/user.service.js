@@ -12,6 +12,10 @@ const bcrypt = require("bcryptjs");
  */
 const getUserById=async (id)=>{
     const user = await User.findById(id);
+    if (!user) {
+        throw new ApiError(httpStatus.BAD_REQUEST, "User not found")
+    }
+
     return user;
 }
 
@@ -54,7 +58,8 @@ const getUserById=async (id)=>{
     if (isExist) {
         throw new ApiError(httpStatus.OK, "Email already taken");
     }
-    const newUser = await User.create(user);
+    const hashedPassword=await bcrypt.hash(user.password,10);
+    const newUser = await User.create({...user,password:hashedPassword});
     return newUser;
 }
 
